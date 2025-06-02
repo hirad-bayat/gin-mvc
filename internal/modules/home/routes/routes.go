@@ -1,6 +1,7 @@
 package route
 
 import (
+	homeController "gin-demo/internal/modules/home/controller"
 	"gin-demo/pkg/html"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -8,6 +9,9 @@ import (
 )
 
 func Routes(router *gin.Engine) {
+
+	homeController := homeController.New()
+
 	router.GET("/api", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message":  "pong",
@@ -22,11 +26,7 @@ func Routes(router *gin.Engine) {
 		})
 	})
 
-	router.GET("/", func(c *gin.Context) {
-		html.Render(c, http.StatusOK, "modules/home/html/home", gin.H{
-			"title": "Home Page",
-		})
-	})
+	router.GET("/", homeController.Index)
 
 	router.GET("/about", func(c *gin.Context) {
 		html.Render(c, http.StatusOK, "modules/home/html/about", gin.H{
