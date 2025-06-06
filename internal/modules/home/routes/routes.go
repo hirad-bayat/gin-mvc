@@ -11,6 +11,9 @@ import (
 func Routes(router *gin.Engine) {
 
 	homeController := homeController.New()
+	router.GET("/", homeController.Index)
+	router.GET("/login", homeController.Login)
+	router.GET("/register", homeController.Register)
 
 	router.GET("/api", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -25,8 +28,6 @@ func Routes(router *gin.Engine) {
 			"APP_NAME": viper.Get("App.Name"),
 		})
 	})
-
-	router.GET("/", homeController.Index)
 
 	router.GET("/about", func(c *gin.Context) {
 		html.Render(c, http.StatusOK, "modules/home/html/about", gin.H{

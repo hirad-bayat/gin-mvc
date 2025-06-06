@@ -4,3 +4,10 @@ app:
 server:
   host: localhost
   port: 8989
+
+db:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: Hirad1375
+  name: blog
