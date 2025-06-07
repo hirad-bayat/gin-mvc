@@ -14,6 +14,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/", homeController.Index)
 	router.GET("/login", homeController.Login)
 	router.GET("/register", homeController.Register)
+	router.GET("/articles", homeController.Articles)
 
 	router.GET("/api", func(c *gin.Context) {
 		c.JSON(200, gin.H{

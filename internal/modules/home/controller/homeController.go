@@ -1,15 +1,20 @@
 package controller
 
 import (
+	ArticleService "gin-demo/internal/modules/article/services"
 	"gin-demo/pkg/html"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type Controller struct{}
+type Controller struct {
+	articleService ArticleService.ArticleServiceInterface
+}
 
 func New() *Controller {
-	return &Controller{}
+	return &Controller{
+		articleService: ArticleService.New(),
+	}
 }
 
 func (controller *Controller) Index(c *gin.Context) {
@@ -27,5 +32,13 @@ func (controller *Controller) Login(c *gin.Context) {
 func (controller *Controller) Register(c *gin.Context) {
 	html.Render(c, http.StatusOK, "modules/home/html/register", gin.H{
 		"title": "Register Page",
+	})
+}
+
+func (controller *Controller) Articles(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{
+		"feature": controller.articleService.GetFeaturedArticles(),
+		"stories": controller.articleService.GetStoriesArticles(),
 	})
 }
