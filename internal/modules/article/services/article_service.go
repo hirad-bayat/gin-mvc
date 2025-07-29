@@ -1,8 +1,9 @@
 package services
 
 import (
-	ArticleModel "gin-demo/internal/modules/article/models"
+	"errors"
 	ArticleRepository "gin-demo/internal/modules/article/repositories"
+	ArticleResponses "gin-demo/internal/modules/article/responses"
 )
 
 type ArticleService struct {
@@ -15,9 +16,21 @@ func New() *ArticleService {
 	}
 }
 
-func (ArticleService *ArticleService) GetFeaturedArticles() []ArticleModel.Article {
-	return ArticleService.articleRepository.List(4)
+func (ArticleService *ArticleService) GetFeaturedArticles() ArticleResponses.Articles {
+	articles := ArticleService.articleRepository.List(4)
+	return ArticleResponses.ToArticles(articles)
 }
-func (ArticleService *ArticleService) GetStoriesArticles() []ArticleModel.Article {
-	return ArticleService.articleRepository.List(6)
+func (ArticleService *ArticleService) GetStoriesArticles() ArticleResponses.Articles {
+	articles := ArticleService.articleRepository.List(6)
+	return ArticleResponses.ToArticles(articles)
+}
+
+func (ArticleService *ArticleService) Find(id int) (ArticleResponses.Article, error) {
+	var response ArticleResponses.Article
+
+	article := ArticleService.articleRepository.Find(id)
+	if article.ID == 0 {
+		return response, errors.New("article not found")
+	}
+	return ArticleResponses.ToArticle(article), nil
 }

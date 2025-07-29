@@ -1,8 +1,11 @@
 package services
 
-import ArticleModel "gin-demo/internal/modules/article/models"
+import (
+	ArticleResponses "gin-demo/internal/modules/article/responses"
+)
 
 type ArticleServiceInterface interface {
-	GetFeaturedArticles() []ArticleModel.Article
-	GetStoriesArticles() []ArticleModel.Article
+	GetFeaturedArticles() ArticleResponses.Articles
+	GetStoriesArticles() ArticleResponses.Articles
+	Find(id int) (ArticleResponses.Article, error)
 }
