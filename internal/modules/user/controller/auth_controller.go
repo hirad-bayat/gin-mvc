@@ -2,15 +2,22 @@ package controller
 
 import (
 	"gin-demo/internal/modules/user/requests/auth"
+	UserService "gin-demo/internal/modules/user/services"
+	"gin-demo/pkg/errors"
 	"gin-demo/pkg/html"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
-type Controller struct{}
+type Controller struct {
+	userService UserService.UserServiceInterface
+}
 
 func New() *Controller {
-	return &Controller{}
+	return &Controller{
+		userService: UserService.New(),
+	}
 }
 
 func (controller *Controller) Login(c *gin.Context) {
@@ -27,18 +34,30 @@ func (controller *Controller) Register(c *gin.Context) {
 func (controller *Controller) HandleRegister(c *gin.Context) {
 	//validate the request
 	var request auth.RegisterRequest
+
 	// This will infer what binder to use depending on the content-type header.
 	if err := c.ShouldBind(&request); err != nil {
-		//c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		errors.Init()
+		errors.SetFormErrors(err)
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": errors.Get()})
+		return
+
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}
 
 	//create the user
+	user, err := controller.userService.Create(request)
 
 	//check if there is any error on the user creation
+	if err != nil {
+		c.Redirect(http.StatusFound, "/register")
+		return
+	}
 
 	//after creating user redirect to home page
-
-	c.JSON(http.StatusOK, gin.H{"message": "register handler"})
+	log.Printf("user created successfully with a name %s \n", user.Name)
+	c.Redirect(http.StatusFound, "/")
 }
